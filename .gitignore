@@ -1,0 +1,6 @@
+*.a
+*.o
+doc/
+build/
+lib/
+bin/
