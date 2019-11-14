@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "bashsync script"
+echo "bashsync"
