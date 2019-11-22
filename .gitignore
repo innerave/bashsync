@@ -1,6 +1,8 @@
 *.a
 *.o
+*.test
 doc/
 build/
 lib/
 bin/
+src/test
