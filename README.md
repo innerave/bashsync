@@ -1,3 +1,9 @@
 # bashsync
-Запускать как ./bashsync {dir1} {dir2}
-Пример ./bashsync $PWD $PWD/test
+Запускать как
+```bash
+./bashsync {dir1} {dir2}
+```
+Пример 
+```bash
+./bashsync $PWD $PWD/test
+```
