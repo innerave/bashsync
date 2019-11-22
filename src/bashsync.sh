@@ -6,33 +6,34 @@ to=$2
 #проверка на пустоту строк
 if [ -z $from ] || [ -z $to ]
 then 
-	echo "Empty string(s)"
+	echo "You should specify directories first"
 	exit 2
 #проверка на существование каталогов
 elif [ ! -d $from ] || [ ! -d $to ]
 then
-	echo "Not a cataloge(s)"
+	echo "There's no such directory"
 	exit 3
 else
-	echo "Directory from = $from"
-	echo "Directory to =$to"
-	read -p "Continue? (Y/N): " answer
+	echo "You are going to sync your stuff"
+	echo "between $from"
+	echo "and $to"
+	read -p "Proceed? (Y/N): " answer
 	#ниже лучше поменять на регулярку в [[]] ибо как аут написал
 	if [ $answer = "y" ] || [ $answer = "Y" ]
 	then
-		echo "Start to find..."
+		echo "Starting syncing job..."
 	else 
-		echo "Finish"
+		echo "Finished"
 		exit 1
 	fi
 fi
-echo "Copy from: $from"
+echo "Copying from $from"
 for file in $( find $from -mindepth 1 -maxdepth 1)
 do
 	filename=$( basename  $file )
 	cp -i $file $to/$filename
 done
-echo "Copy from: $to"
+echo "Copying from $to"
 for file in $( find $to -mindepth 1 -maxdepth 1)
 do
 	filename=$( basename  $file )
