@@ -1,47 +1,42 @@
 #!/bin/bash
-echo "bashsync"
-#здесь поменять шоб одно из переменных указывало на usb
-from=$1
-to=$2
+while read -r line
+do
+	arr=( $line )
+	if [ ${arr[0]} == 1 ] && [[ ${arr[1]} == sd[a-Z][0-9] ]]
+	then
+		from=${arr[2]}
+	fi
+done <<< $( lsblk -n -l -o HOTPLUG,NAME,MOUNTPOINT )
+to=$1
 #проверка на пустоту строк
-if [ -z $from ] || [ -z $to ]
+if  [ -z $to ]
 then 
-	echo "Empty string(s)"
+	echo "You should specify directory first"
 	exit 2
+elif [ -z $from ] 
+then
+    echo "Check if usb is mounted"
+    exit 3
 #проверка на существование каталогов
 elif [ ! -d $from ] || [ ! -d $to ]
 then
-	echo "Not a cataloge(s)"
-	exit 3
+	echo "There's no such directory"
+	exit 4
 else
-	echo "Directory from = $from"
-	echo "Directory to =$to"
-	read -p "Continue? (Y/N): " answer
-	#ниже лучше поменять на регулярку в [[]] ибо как аут написал
-	if [ $answer = "y" ] || [ $answer = "Y" ]
+	echo "You are going to sync your stuff"
+	echo "between $from"
+	echo "and $to"
+	read -p "Proceed? (Y/N): " answer
+	echo $answer
+	if [[ $answer == [yY] ]]
 	then
-		echo "Start to find..."
+		echo "Starting syncing job..."
 	else 
-		echo "Finish"
+		echo "Finished"
 		exit 1
 	fi
 fi
-echo "Copy from: $from"
-for file in $( find $from -mindepth 1 -maxdepth 1)
-do
-	filename=$( basename  $file )
-	cp -i $file $to/$filename
-done
-echo "Copy from: $to"
-for file in $( find $to -mindepth 1 -maxdepth 1)
-do
-	filename=$( basename  $file )
-	cp -i $file $from/$filename
-done
-#все это тупо ибо можно всю папку скопировать
-#и будет типо: cp -i $from/* $to
-#              cp -i &to/* $from
-#а так как аутисты наложили 10 строк кода, мда.....
-
-
-
+echo "Copying from $from"
+cp -i -R $from/* $to
+echo "Copying from $to"
+cp -i -R -n $to/* $from
