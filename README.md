@@ -1,9 +1,9 @@
 # bashsync
 Запускать как
 ```bash
-./bashsync.sh {dir1} {dir2}
+./bashsync.sh {dir1}
 ```
 Пример 
 ```bash
-./bashsync.sh $PWD $PWD/test
+./bashsync.sh $PWD/test
 ```
