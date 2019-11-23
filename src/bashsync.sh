@@ -19,7 +19,7 @@ else
 	echo "and $to"
 	read -p "Proceed? (Y/N): " answer
 	#ниже лучше поменять на регулярку в [[]] ибо как аут написал
-	if [ $answer = "y" ] || [ $answer = "Y" ]
+	if [[ $answer==[yY] ]]
 	then
 		echo "Starting syncing job..."
 	else 
@@ -28,21 +28,10 @@ else
 	fi
 fi
 echo "Copying from $from"
-for file in $( find $from -mindepth 1 -maxdepth 1)
-do
-	filename=$( basename  $file )
-	cp -i $file $to/$filename
-done
+cp -i -R $from/* $to
 echo "Copying from $to"
-for file in $( find $to -mindepth 1 -maxdepth 1)
-do
-	filename=$( basename  $file )
-	cp -i $file $from/$filename
-done
-#все это тупо ибо можно всю папку скопировать
-#и будет типо: cp -i $from/* $to
-#              cp -i &to/* $from
-#а так как аутисты наложили 10 строк кода, мда.....
+cp -i -R -n $to/* $from
+
 
 
 
