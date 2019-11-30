@@ -1,22 +1,56 @@
-#!/bin/bash
-while read -r line
-do
-	arr=( $line )
-	if [ ${arr[0]} == 1 ] && [[ ${arr[1]} == sd[a-Z][0-9] ]]
-	then
-		from=${arr[2]}
-	fi
-done <<< $( lsblk -n -l -o HOTPLUG,NAME,MOUNTPOINT )
-to=$1
-#проверка на пустоту строк
-if  [ -z $to ]
-then 
-	echo "You should specify directory first"
-	exit 2
-elif [ -z $from ] 
+function copyfile {
+arg1=$1
+arg2=$2
+if [ "${arg1: -1}" = "/" ]
 then
-    echo "Check if usb is mounted"
-    exit 3
+echo "${arg1: -1}";
+arg1=${arg1%?}
+fi
+if [ "${arg2: -1}" = "/" ]
+then
+echo "${arg2: -1}";
+arg2=${arg2%?}
+fi
+fromlen="${#arg1}";
+for line in $( find $arg1/* )
+do
+    file="${line:fromlen+1}";
+    if [ -f "$arg2/$file" ]
+    then
+        arr1=$( ls -g "$line" );
+        arr2=$( ls -g "$arg2/$file" );
+        arr1=( $arr1 );
+        arr2=( $arr2 );
+        echo "$file changed:";
+        echo "in $arg1";
+        echo "at ${arr1[4]} ${arr1[5]} ${arr1[6]}";
+        echo "in $arg2";
+        echo "at ${arr2[4]} ${arr2[5]} ${arr2[6]}";
+        read -p "Which to rewrite? (1/2/N): " answer
+        if [ "$answer" == "1" ]
+        then
+            cp -R "$line" "$arg2/$file"  
+            echo "Copied 1-st"
+        elif [ "$answer" == "2" ]
+        then
+            cp -R "$arg2/$file" "$line"  
+            echo "Copied 2-nd"
+        else
+        continue
+        fi
+        continue
+    fi
+    cp -i "$line" "$arg2/$file" 
+done
+}
+
+from=$1
+to=$2
+#проверка на пустоту строк
+if  [ -z $to ] || [ -z $from ]
+then 
+	echo "You should specify directories"
+	exit 2
 #проверка на существование каталогов
 elif [ ! -d $from ] || [ ! -d $to ]
 then
@@ -36,7 +70,5 @@ else
 		exit 1
 	fi
 fi
-echo "Copying from $from"
-cp -i -R $from/* $to
-echo "Copying from $to"
-cp -i -R -n $to/* $from
+copyfile $from $to;
+cp -n -R $to/* $from
